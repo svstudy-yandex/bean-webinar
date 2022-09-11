@@ -13,13 +13,27 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 @Repository
-//@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
     private long nextId = 1;
 
     public InMemoryUserRepository() {
         System.out.println("InMemoryUserRepository - constructor");
+    }
+
+    @PostConstruct
+    private void init() {
+        System.out.println("InMemoryUserRepository - @PostConstruct");
+        User admin = new User();
+        admin.setName("admin");
+        admin.setEmail("admin@yandex.ru");
+        save(admin);
+    }
+
+    @PreDestroy
+    private void destroy() {
+        System.out.println("InMemoryUserRepository - @PreDestroy");
     }
 
     @Override
